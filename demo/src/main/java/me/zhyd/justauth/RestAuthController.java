@@ -28,9 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yadong.zhang (yadong.zhang0415(a)gmail.com)
@@ -219,11 +217,15 @@ public class RestAuthController {
                         .build());
                 break;
             case "qq":
+                List<String> scopes = new ArrayList<>(10);
+                scopes.add("get_user_info");
+                scopes.add("getUnionId");
+
                 authRequest = new AuthQqRequest(AuthConfig.builder()
                         .clientId("")
                         .clientSecret("")
                         .redirectUri("")
-
+                        .scopes(scopes)
                         .build());
                 break;
             case "wechat_open":

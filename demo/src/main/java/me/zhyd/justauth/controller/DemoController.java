@@ -1,6 +1,9 @@
 package me.zhyd.justauth.controller;
 
-import me.zhyd.justauth.vo.QQVO;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import me.zhyd.justauth.component.Oauth2Component;
+import me.zhyd.justauth.vo.QQInfoVo;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,20 +20,27 @@ public class DemoController {
     @Resource
     RedisTemplate<String, Object> redisTemplate;
 
+    @Resource
+    Oauth2Component oauth2Component;
+
     @GetMapping("qq/callback")
-    public Map<String, String> qq(String code, String state) {
+    public Map<String, Object> qq(String code, String state) {
         System.out.println("localhost8080.site/aouth/qq/callback");
-        redisTemplate.opsForValue().set("code", code);
-        redisTemplate.opsForValue().set("state", state);
-        Map<String, String> map = new HashMap<>();
-        map.put("code", code);
-        map.put("state", state);
+
+        String token = oauth2Component.getToken(code, state);
+        String openId = oauth2Component.getOpenId(token);
+
+        QQInfoVo userInfo = oauth2Component.getUserInfo(token, openId);
+        String jsonString = JSON.toJSONString(userInfo);
+        redisTemplate.opsForValue().set("user_info", jsonString);
+
+        HashMap<String, Object> map = new HashMap<>(16);
+        map.put("user_info", userInfo);
         return map;
     }
 
     @GetMapping("test")
     public String test() {
-
-        return "test";
+        return oauth2Component.getCode();
     }
 }

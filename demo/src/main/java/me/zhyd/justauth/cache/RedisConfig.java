@@ -27,10 +27,11 @@ public class RedisConfig extends CachingConfigurerSupport {
     @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setValueSerializer(new Jackson2JsonRedisSerializer<Object>(Object.class));
-        template.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
+        StringRedisSerializer serializer = new StringRedisSerializer();
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+        template.setKeySerializer(serializer);
+        template.setHashKeySerializer(serializer);
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }
