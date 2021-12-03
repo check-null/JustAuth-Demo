@@ -40,7 +40,10 @@ public class DemoController {
     }
 
     @GetMapping("test")
-    public String test() {
-        return oauth2Component.getCode();
+    public Map<String, Object> test() {
+        Map<String, Object> map = new HashMap<>(16);
+        final Object userInfo = redisTemplate.opsForValue().get("user_info");
+        map.put("user_info", userInfo);
+        return map;
     }
 }

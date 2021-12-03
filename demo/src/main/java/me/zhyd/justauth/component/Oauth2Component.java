@@ -1,6 +1,7 @@
 package me.zhyd.justauth.component;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 import lombok.Setter;
 import me.zhyd.justauth.vo.QQInfoVo;
 import me.zhyd.justauth.vo.QQOpenIdVo;
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
-@Setter
+@Data
 @Component
 public class Oauth2Component {
 

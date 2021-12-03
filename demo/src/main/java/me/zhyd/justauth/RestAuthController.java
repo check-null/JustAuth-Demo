@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xkcoding.http.config.HttpConfig;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.justauth.cache.AuthStateRedisCache;
+import me.zhyd.justauth.component.Oauth2Component;
 import me.zhyd.justauth.custom.AuthMyGitlabRequest;
 import me.zhyd.justauth.service.UserService;
 import me.zhyd.oauth.config.AuthConfig;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,14 +48,17 @@ public class RestAuthController {
     private AuthStateRedisCache stateRedisCache;
     @Autowired
     private UserService userService;
+    @Resource
+    Oauth2Component oauth2Component;
 
     @RequestMapping("/render/{source}")
     @ResponseBody
     public void renderAuth(@PathVariable("source") String source, HttpServletResponse response) throws IOException {
         log.info("进入render：" + source);
         AuthRequest authRequest = getAuthRequest(source);
+        // 获得qq授权页面地址
         String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
-        log.info(authorizeUrl);
+        log.info("重定向url: {}", authorizeUrl);
         response.sendRedirect(authorizeUrl);
     }
 
@@ -222,9 +227,9 @@ public class RestAuthController {
                 scopes.add("getUnionId");
 
                 authRequest = new AuthQqRequest(AuthConfig.builder()
-                        .clientId("")
-                        .clientSecret("")
-                        .redirectUri("")
+                        .clientId(oauth2Component.getAppId())
+                        .clientSecret(oauth2Component.getAppKey())
+                        .redirectUri(oauth2Component.getCallback())
                         .scopes(scopes)
                         .build());
                 break;
