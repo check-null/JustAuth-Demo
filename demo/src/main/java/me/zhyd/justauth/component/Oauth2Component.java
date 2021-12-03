@@ -7,6 +7,7 @@ import me.zhyd.justauth.vo.QQInfoVo;
 import me.zhyd.justauth.vo.QQOpenIdVo;
 import me.zhyd.justauth.vo.QQTokenVo;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 
 @Data
 @Component
+@PropertySource("classpath:oauth.properties")
 public class Oauth2Component {
 
     @Value("${qq.appid}")
