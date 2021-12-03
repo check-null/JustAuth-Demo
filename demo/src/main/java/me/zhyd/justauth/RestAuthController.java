@@ -57,7 +57,8 @@ public class RestAuthController {
         log.info("进入render：" + source);
         AuthRequest authRequest = getAuthRequest(source);
         // 获得qq授权页面地址
-        String authorizeUrl = authRequest.authorize(AuthStateUtils.createState());
+        final String state = AuthStateUtils.createState();
+        String authorizeUrl = authRequest.authorize(state);
         log.info("重定向url: {}", authorizeUrl);
         response.sendRedirect(authorizeUrl);
     }
@@ -226,12 +227,14 @@ public class RestAuthController {
                 scopes.add("get_user_info");
                 scopes.add("getUnionId");
 
-                authRequest = new AuthQqRequest(AuthConfig.builder()
+                final AuthConfig build = AuthConfig.builder()
                         .clientId(oauth2Component.getAppId())
                         .clientSecret(oauth2Component.getAppKey())
                         .redirectUri(oauth2Component.getCallback())
+                        .unionId(true)
                         .scopes(scopes)
-                        .build());
+                        .build();
+                authRequest = new AuthQqRequest(build);
                 break;
             case "wechat_open":
                 authRequest = new AuthWeChatOpenRequest(AuthConfig.builder()
